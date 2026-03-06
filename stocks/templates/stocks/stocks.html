@@ -1,0 +1,432 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Stocks Analytics{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/stocks.css' %}">
+
+<section class="section">
+  <h2>Stock Dashboard</h2>
+  <p class="muted">
+    Data: prices via yfinance · analyst + financial statements via yahooquery (loaded per card).
+  </p>
+
+  <div class="stock-carousel">
+    <div class="stock-carousel-head">
+      <div class="stock-dots" id="stockDots"></div>
+
+      <div class="stock-actions">
+        <button class="about-btn" type="button" id="stockPrev">‹</button>
+        <button class="about-btn" type="button" id="stockNext">›</button>
+      </div>
+    </div>
+
+    <div class="stock-track" id="stockTrack">
+      {% for s in stocks %}
+      <article class="stock-card" data-symbol="{{ s.symbol }}">
+        <div class="stock-top">
+          <div>
+            <h3>{{ s.name }} <span class="meta">({{ s.symbol }})</span></h3>
+            <p class="meta" id="stStatus-{{ s.symbol }}">Waiting to load…</p>
+          </div>
+          <div class="stock-price" id="stPrice-{{ s.symbol }}">—</div>
+        </div>
+
+        <div class="stock-grid">
+          <div class="card">
+            <h4>Indicators</h4>
+
+            <div class="stock-metrics">
+                <div class="metric">
+                <div class="metric-k">RSI(14)</div>
+                <div class="metric-v" id="stRSI-{{ s.symbol }}">—</div>
+                </div>
+                <div class="metric">
+                <div class="metric-k">BOLL</div>
+                <div class="metric-v" id="stBOLL-{{ s.symbol }}">—</div>
+                </div>
+                <div class="metric">
+                <div class="metric-k">KDJ</div>
+                <div class="metric-v" id="stKDJ-{{ s.symbol }}">—</div>
+                </div>
+            </div>
+
+            <div class="signal-box" style="margin-top:12px;">
+                <div class="signal-row">
+                <span class="signal-pill" id="stSignalPill-{{ s.symbol }}">—</span>
+                <span class="meta small" id="stSignalScore-{{ s.symbol }}">—</span>
+                </div>
+
+                <ul class="signal-list" id="stSignalList-{{ s.symbol }}">
+                <li class="meta">Loading signal…</li>
+                </ul>
+
+                <p class="meta small" style="opacity:.75; margin-top:10px;">
+                Educational only — indicators can be wrong. Use risk management and confirm with news/earnings.
+                </p>
+            </div>
+        </div>
+
+
+          <div class="card">
+            <h4>Charts</h4>
+            <div class="chart-frame chart-frame--price">
+                <canvas id="chart-{{ s.symbol }}"></canvas>
+            </div>
+          </div>
+
+          <div class="card span-2">
+            <div class="row-between">
+                <h4>Analyst & Ratings</h4>
+                <span class="meta small" id="stAnalystMeta-{{ s.symbol }}">—</span>
+            </div>
+            <p style="padding-top: 0;margin-top: 0;">
+                Analyst recommendation trend over past months (based on Yahoo Finance recommendations).
+            </p>
+            <div class="chart-frame chart-frame--analyst">
+                <canvas id="analyst-{{ s.symbol }}"></canvas>
+            </div>
+
+            <p class="meta small" id="stAnalystHint-{{ s.symbol }}">Loading analyst trend…</p>
+          </div>
+
+
+          <div class="card span-2">
+            <h4>Financial Statements (Annual)</h4>
+            <div class="tabs">
+              <button class="tab active" data-tab="income-{{ s.symbol }}">Income</button>
+              <button class="tab" data-tab="balance-{{ s.symbol }}">Balance</button>
+              <button class="tab" data-tab="cash-{{ s.symbol }}">Cash Flow</button>
+            </div>
+
+            <div class="tabpanes">
+              <div class="pane active" id="income-{{ s.symbol }}"></div>
+              <div class="pane" id="balance-{{ s.symbol }}"></div>
+              <div class="pane" id="cash-{{ s.symbol }}"></div>
+            </div>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+(() => {
+  const track = document.getElementById("stockTrack");
+  const prev = document.getElementById("stockPrev");
+  const next = document.getElementById("stockNext");
+  const dotsWrap = document.getElementById("stockDots");
+  const cards = Array.from(track.querySelectorAll(".stock-card"));
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const loaded = new Set();
+  const chartBySym = new Map();
+
+  function gapPx() {
+    const s = getComputedStyle(track);
+    return parseFloat(s.columnGap || s.gap || "0") || 0;
+  }
+  function cardW() {
+    const first = cards[0];
+    if (!first) return 0;
+    return first.getBoundingClientRect().width + gapPx();
+  }
+  function idxNow() {
+    const w = cardW() || 1;
+    return Math.max(0, Math.min(cards.length - 1, Math.floor((track.scrollLeft + 2) / w)));
+  }
+  function scrollToIdx(i) {
+    const w = cardW();
+    track.scrollTo({ left: i * w, behavior: reduceMotion ? "auto" : "smooth" });
+  }
+function buildIndicatorSignal(data) {
+
+  const rsiNow = Number(data.signals?.rsi_now ?? NaN);
+  const bollPos = String(data.signals?.boll_pos || "inside");
+  const kdjNote = String(data.signals?.kdj_note || "");
+
+  let score = 0;
+  const reasons = [];
+
+  // RSI heuristic
+  if (isFinite(rsiNow)) {
+    if (rsiNow <= 30) { score += 2; reasons.push(`RSI ${rsiNow.toFixed(1)} (oversold) → possible rebound zone`); }
+    else if (rsiNow < 45) { score += 1; reasons.push(`RSI ${rsiNow.toFixed(1)} (weak) → watch for momentum shift`); }
+    else if (rsiNow <= 55) { reasons.push(`RSI ${rsiNow.toFixed(1)} (neutral)`); }
+    else if (rsiNow < 70) { score -= 1; reasons.push(`RSI ${rsiNow.toFixed(1)} (strong) → could be extended`); }
+    else { score -= 2; reasons.push(`RSI ${rsiNow.toFixed(1)} (overbought) → pullback risk`); }
+  } else {
+    reasons.push("RSI unavailable");
+  }
+
+  // BOLL heuristic
+  if (bollPos === "below_lower") { score += 2; reasons.push("Price below lower band → mean-reversion potential (high risk)"); }
+  else if (bollPos === "above_upper") { score -= 2; reasons.push("Price above upper band → breakout or overheating (risk)"); }
+  else { reasons.push("Price inside bands → normal volatility"); }
+
+  // KDJ heuristic
+  if (kdjNote.includes("K above D")) { score += 1; reasons.push("KDJ: K crossed above D → short-term bullish momentum"); }
+  else if (kdjNote.includes("K below D")) { score -= 1; reasons.push("KDJ: K below D → short-term bearish momentum"); }
+  else { reasons.push("KDJ signal unclear"); }
+
+  // Map score → label
+  let label = "Neutral";
+  let cls = "neutral";
+  if (score >= 2) { label = "Bullish bias"; cls = "bull"; }
+  else if (score <= -2) { label = "Bearish bias"; cls = "bear"; }
+
+  return { label, cls, score, reasons };
+}
+
+  // dots
+  dotsWrap.innerHTML = cards.map(() => `<span class="dot"></span>`).join("");
+  const dots = Array.from(dotsWrap.querySelectorAll(".dot"));
+  function setDot() {
+    const i = idxNow();
+    dots.forEach((d, k) => d.classList.toggle("active", k === i));
+  }
+  dots.forEach((d, i) => d.addEventListener("click", () => scrollToIdx(i)));
+
+  prev.addEventListener("click", () => scrollToIdx(idxNow() - 1));
+  next.addEventListener("click", () => scrollToIdx(idxNow() + 1));
+  track.addEventListener("scroll", () => requestAnimationFrame(setDot));
+  window.addEventListener("resize", () => { scrollToIdx(idxNow()); setDot(); });
+
+  // tabs
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".tab");
+    if (!btn) return;
+    const card = btn.closest(".stock-card");
+    if (!card) return;
+
+    const tabs = Array.from(card.querySelectorAll(".tab"));
+    tabs.forEach(t => t.classList.toggle("active", t === btn));
+
+    const panes = Array.from(card.querySelectorAll(".pane"));
+    panes.forEach(p => p.classList.toggle("active", p.id === btn.dataset.tab));
+  });
+
+  function fmtMoney(x) {
+    if (x === null || x === undefined) return "—";
+    const n = Number(x);
+    if (!isFinite(n)) return "—";
+    // small formatter
+    const abs = Math.abs(n);
+    if (abs >= 1e12) return (n/1e12).toFixed(2) + "T";
+    if (abs >= 1e9)  return (n/1e9).toFixed(2) + "B";
+    if (abs >= 1e6)  return (n/1e6).toFixed(2) + "M";
+    return n.toLocaleString();
+  }
+
+  function renderTable(el, records) {
+    if (!records || !records.length) {
+      el.innerHTML = `<p class="meta">No data.</p>`;
+      return;
+    }
+    const cols = Object.keys(records[0].values || {});
+    const head = `<tr><th>Period</th>${cols.map(c => `<th>${c}</th>`).join("")}</tr>`;
+    const rows = records.map(r => {
+      return `<tr>
+        <td class="mono">${r.label}</td>
+        ${cols.map(c => {
+          const v = r.values[c];
+          const out = (typeof v === "number") ? fmtMoney(v) : (v ?? "—");
+          return `<td class="mono">${out}</td>`;
+        }).join("")}
+      </tr>`;
+    }).join("");
+    el.innerHTML = `<div class="table-wrap"><table class="tbl">${head}${rows}</table></div>`;
+  }
+
+  async function loadSymbol(sym) {
+    if (loaded.has(sym)) return;
+    loaded.add(sym);
+
+    const statusEl = document.getElementById(`stStatus-${sym}`);
+    statusEl.textContent = "Loading…";
+
+    try {
+      const res = await fetch(`/stocks/data/${sym}/`, { cache: "no-store" });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+
+      // price
+      const p = data.market.last_close;
+      const ch = data.market.change;
+      const chp = data.market.change_pct;
+      const sign = ch >= 0 ? "+" : "";
+      document.getElementById(`stPrice-${sym}`).innerHTML =
+        `<span class="mono">${p.toFixed(2)}</span>
+         <span class="chg ${ch >= 0 ? "up" : "down"}">${sign}${ch.toFixed(2)} (${sign}${chp.toFixed(2)}%)</span>`;
+
+      // indicators
+      document.getElementById(`stRSI-${sym}`).textContent = data.signals.rsi_now.toFixed(1);
+      document.getElementById(`stBOLL-${sym}`).textContent = data.signals.boll_pos;
+      document.getElementById(`stKDJ-${sym}`).textContent = data.signals.kdj_note;
+        const pill = document.getElementById(`stSignalPill-${sym}`);
+        const scoreEl = document.getElementById(`stSignalScore-${sym}`);
+        const listEl = document.getElementById(`stSignalList-${sym}`);
+
+        const sig = buildIndicatorSignal(data);
+
+        pill.textContent = sig.label;
+        pill.classList.remove("bull","neutral","bear");
+        pill.classList.add(sig.cls);
+
+        scoreEl.textContent = `Signal score: ${sig.score} (RSI+BOLL+KDJ)`;
+
+        listEl.innerHTML = sig.reasons.map(r => `<li class="meta">${r}</li>`).join("");
+
+      // analyst
+      // ---- Analyst trend chart ----
+    const metaEl = document.getElementById(`stAnalystMeta-${sym}`);
+    const hintEl = document.getElementById(`stAnalystHint-${sym}`);
+    const canvas = document.getElementById(`analyst-${sym}`);
+
+    const trend = data.analyst?.recommendationTrend;
+    metaEl.textContent = data.analyst?.shortName ? data.analyst.shortName : sym;
+
+    if (!canvas || !Array.isArray(trend) || trend.length === 0) {
+    hintEl.textContent = "No analyst trend data available.";
+    } else {
+    // Ensure chronological order: older -> newest
+    // Your periods are like "-3m", "-2m", "-1m", "0m"
+    const order = (p) => {
+        if (p === "0m") return 0;
+        const m = String(p).match(/-([0-9]+)m/);
+        return m ? -parseInt(m[1], 10) : 0;
+    };
+    const rows = [...trend].sort((a, b) => order(a.period) - order(b.period));
+
+    const labels = rows.map(r => r.period); // e.g. -3m -2m -1m 0m
+    const strongBuy = rows.map(r => Number(r.strongBuy || 0));
+    const buy = rows.map(r => Number(r.buy || 0));
+    const hold = rows.map(r => Number(r.hold || 0));
+    const sell = rows.map(r => Number(r.sell || 0));
+    const strongSell = rows.map(r => Number(r.strongSell || 0));
+
+    // Small summary: latest month
+    const latest = rows[rows.length - 1];
+    hintEl.textContent =
+        `Latest (${latest.period}): SB ${latest.strongBuy || 0} · B ${latest.buy || 0} · H ${latest.hold || 0} · S ${latest.sell || 0} · SS ${latest.strongSell || 0}`;
+
+    // If chart already exists for this symbol, destroy before re-render
+    const key = `analyst_${sym}`;
+    if (chartBySym.has(key)) {
+        chartBySym.get(key).destroy();
+        chartBySym.delete(key);
+    }
+
+    const analystChart = new Chart(canvas, {
+        type: "bar",
+        data: {
+        labels,
+        datasets: [
+            { label: "Strong Buy", data: strongBuy, stack: "rec" },
+            { label: "Buy", data: buy, stack: "rec" },
+            { label: "Hold", data: hold, stack: "rec" },
+            { label: "Sell", data: sell, stack: "rec" },
+            { label: "Strong Sell", data: strongSell, stack: "rec" },
+        ]
+        },
+        options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { labels: { color: "#cbd5e1" } },
+            tooltip: { mode: "index", intersect: false }
+        },
+        scales: {
+            x: {
+            stacked: true,
+            ticks: { color: "#94a3b8" },
+            grid: { color: "rgba(255,255,255,0.06)" }
+            },
+            y: {
+            stacked: true,
+            ticks: { color: "#94a3b8" },
+            grid: { color: "rgba(255,255,255,0.06)" }
+            }
+        }
+        }
+    });
+
+    chartBySym.set(key, analystChart);
+    }
+
+
+      // statements
+      renderTable(document.getElementById(`income-${sym}`), data.financials.income);
+      renderTable(document.getElementById(`balance-${sym}`), data.financials.balance);
+      renderTable(document.getElementById(`cash-${sym}`), data.financials.cashflow);
+
+      // chart (close + boll + RSI as second axis line)
+      const ctx = document.getElementById(`chart-${sym}`);
+      const s = data.series;
+
+      const chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: s.dates,
+          datasets: [
+            { label: "Close", data: s.close, tension: 0.35, pointRadius: 0 },
+            { label: "BOLL Mid", data: s.boll_mid, tension: 0.35, pointRadius: 0 },
+            { label: "BOLL Up", data: s.boll_up, tension: 0.35, pointRadius: 0, borderDash: [6,6] },
+            { label: "BOLL Low", data: s.boll_low, tension: 0.35, pointRadius: 0, borderDash: [6,6] },
+            { label: "RSI", data: s.rsi, tension: 0.35, pointRadius: 0, yAxisID: "y2" },
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: "#cbd5e1" } } },
+          scales: {
+            x: { ticks: { color: "#94a3b8", maxTicksLimit: 6 }, grid: { color: "rgba(255,255,255,0.06)" } },
+            y: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(255,255,255,0.06)" } },
+            y2: {
+              position: "right",
+              min: 0, max: 100,
+              ticks: { color: "#94a3b8" },
+              grid: { drawOnChartArea: false }
+            }
+          }
+        }
+      });
+
+      chartBySym.set(sym, chart);
+      statusEl.textContent = "Loaded.";
+
+    } catch (e) {
+      statusEl.textContent = "Failed to load.";
+    }
+  }
+
+  // load when card becomes active (and also prefetch next)
+  function onActiveChange() {
+    const i = idxNow();
+    const sym = cards[i]?.dataset.symbol;
+    if (sym) loadSymbol(sym);
+
+    const nextSym = cards[i+1]?.dataset.symbol;
+    if (nextSym) loadSymbol(nextSym);
+  }
+
+  setDot();
+  onActiveChange();
+
+  track.addEventListener("scroll", () => {
+    requestAnimationFrame(() => {
+      setDot();
+      onActiveChange();
+    });
+  });
+})();
+</script>
+
+{% endblock %}

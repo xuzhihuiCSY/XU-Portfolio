@@ -1,0 +1,1264 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home · XU-Portfolio{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-left">
+    <p class="kicker">Portfolio</p>
+    <h1 class="type-wrap">
+        <span id="typeName" data-text="Zhihui Xu"></span><span class="caret" aria-hidden="true">|</span>
+    </h1>
+    <p class="subtitle">
+      Software Developer
+    </p>
+
+    <p class="summary">
+      Welcome to my portfolio! I’m Zhihui Xu — a developer who enjoys building practical web apps and games.I build full-stack products: dashboards, APIs, and web experiences — from the first prototype to deployment.
+      This site is my playground: projects, a stock dashboard, and a mini-game challenge — all built with Django templates.
+    </p>
+
+    <div class="cta-row">
+      <a class="btn " href="https://www.linkedin.com/in/zhihui-xu-27ba65258/" target="_blank" rel="noreferrer">LinkedIn</a>
+      <a class="btn btn-ghost" href="mailto:xuzhihuieateat@gmail.com">Email</a>
+      <a class="btn btn-ghost" href="https://github.com/xuzhihuiCSY" target="_blank" rel="noreferrer">GitHub</a>
+        <!-- resume download -->
+        <a class="btn btn-ghost" href="{% static 'docs/resume.pdf' %}" download>Resume</a>
+    </div>
+
+    <div class="chips">
+      <span class="chip">Python</span>
+      <span class="chip">Django</span>
+      <span class="chip">React</span>
+      <span class="chip">Java</span>
+      <span class="chip">AWS</span>
+      <span class="chip">Unity (C#)</span>
+    </div>
+  </div>
+
+  <div class="hero-right avatar-wrap">
+    <img class="headshot" src="{% static 'img/headshots.jpg' %}" alt="Zhihui Xu headshot">
+  </div>
+</section>
+<script>
+(() => {
+  const el = document.getElementById("typeName");
+  if (!el) return;
+
+  const full = el.dataset.text || "";
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduceMotion) {
+    el.textContent = full;
+    return;
+  }
+
+  const RETYPE_EVERY_MS = 12000;   // 12s
+  const CLEAR_PAUSE_MS = 500;      // pause before retyping
+
+  let timer = null;
+  let runId = 0;
+
+  function typeOnce(currentRunId) {
+    el.textContent = "";
+    let i = 0;
+
+    function tick() {
+      if (currentRunId !== runId) return; // cancel old run
+      el.textContent = full.slice(0, i);
+      i += 1;
+
+      if (i <= full.length) {
+        const delay = 80 + Math.random() * 70; // human-ish
+        timer = setTimeout(tick, delay);
+      } else {
+        // schedule the next retype
+        timer = setTimeout(() => {
+          if (currentRunId !== runId) return;
+          el.textContent = "";
+          timer = setTimeout(() => typeOnce(currentRunId), CLEAR_PAUSE_MS);
+        }, RETYPE_EVERY_MS);
+      }
+    }
+
+    tick();
+  }
+
+  // start
+  typeOnce(runId);
+
+  // optional: clean up if page is hidden (saves battery on phones)
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      runId++;
+      if (timer) clearTimeout(timer);
+      el.textContent = full;
+    } else {
+      runId++;
+      if (timer) clearTimeout(timer);
+      typeOnce(runId);
+    }
+  });
+})();
+</script>
+
+
+<section class="section">
+  <h2>Featured Projects</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>xuzhihui-resume.com</h3>
+      <p>Portfolio web before this that built with Django + React + Tailwind, deployed on AWS EC2 with secure auth and dashboards.</p>
+      <p class="meta">Nov 2024 – Present</p>
+    </div>
+
+    <div class="card">
+      <h3>Local Multiplayer Shooter (Unity)</h3>
+      <p>Networked 3D survival shooter with synced movement/shooting/respawn, plus server-authoritative AI.</p>
+      <p class="meta">Jan 2025 – Present</p>
+    </div>
+
+    <div class="card">
+      <h3>PPT Agent (PDF → PowerPoint)</h3>
+      <p>Local pipeline to parse PDFs, summarize, generate slide outlines, and render PPTX with strict JSON validation.</p>
+      <p class="meta">Nov 2025</p>
+    </div>
+
+    <div class="card">
+      <h3>AdvSnakeGame (Godot 4)</h3>
+      <p>Mobile snake game with touch controls, 8-direction movement, and portrait-mode UX.</p>
+      <p class="meta">2024</p>
+    </div>
+
+    <div class="card">
+      <h3>More</h3>
+      <p>More Projects can be reviewed on my GitHub. Please review my GitHub for more details.</p>
+      <p class="meta">Present</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Experience</h2>
+  <div class="timeline">
+    <div class="item">
+      <div class="when">May 2022 – Nov 2023</div>
+      <div class="what">
+        <h3>Software Developer · Edgelink Services LLC</h3>
+        <ul>
+          <li>Built StockItupcs.com (stock analysis platform) with REST APIs and dashboards.</li>
+          <li>Designed PostgreSQL schema and migrated from SQLite, reducing query time by ~40%.</li>
+          <li>Implemented secure auth, Stripe payments, messaging, ML pipelines; deployed with Azure, Docker, NGINX.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="when">Jun 2023 – Aug 2023</div>
+      <div class="what">
+        <h3>Summer Intern · 1928 Tap & Grill Catering Co.</h3>
+        <ul>
+          <li>Developed a Django-based electronic menu + inventory system for beverages.</li>
+          <li>Implemented CRUD, admin tools, and low-stock alerts.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="when">Dec 2023 – Oct 2024</div>
+      <div class="what">
+        <h3>Web Developer · CRADI MEDTECH</h3>
+        <ul>
+          <li>Co-built the official website front-end with responsive UI using HTML/CSS/JavaScript.</li>
+          <li>Collaborated with designers and backend engineers to integrate and optimize UX.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Education</h2>
+  <div class="card">
+    <ul class="plain">
+      <li><strong>Northeastern University</strong> — M.S. Computer &amp; Information Science (Jan 2025 – Present)</li>
+      <li><strong>California State University, Fullerton</strong> — B.S. Computer Science (Aug 2021 – Aug 2023)</li>
+      <li><strong>Fullerton College</strong> — A.S. Computer Science (Aug 2016 – May 2021)</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Time Map</h2>
+  <p class="muted">Follow the route — each stop is part of my journey.</p>
+
+  <div class="treasure" aria-label="Treasure map timeline">
+    <svg class="treasure-svg" viewBox="0 0 1000 420" role="img" aria-label="Career path route" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="6" stdDeviation="6" flood-opacity="0.25"/>
+        </filter>
+      </defs>
+
+      <!-- Dotted path (give it an id for animateMotion) -->
+      <path id="route"
+            class="treasure-path"
+            d="M80,320
+               C200,140 320,120 420,200
+               S600,320 700,220
+               S860,100 930,170
+               S900,340 820,330
+               S700,390 620,330"
+            filter="url(#softShadow)" />
+
+      <!-- Runner that follows the SVG path (responsive-safe) -->
+      <g class="svg-runner">
+        <!-- center runner around the motion point -->
+        <g class="runner-shape">
+          <circle class="r-bb" cx="44" cy="14" r="6"></circle>
+        </g>
+
+        <animateMotion dur="14s" repeatCount="indefinite" rotate="auto">
+          <mpath href="#route"></mpath>
+        </animateMotion>
+      </g>
+
+    </svg>
+
+    <!-- Stops (overlayed) -->
+    <div class="stop" style="--x: 10%; --y: 76%;">
+      <div class="pin"></div>
+      <div class="label">Associate Degree<span class="sub">Fullerton College</span></div>
+    </div>
+
+    <div class="stop" style="--x: 24%; --y: 34%;">
+      <div class="pin"></div>
+      <div class="label">QA Analyst Intern<span class="sub">Shanghai Jiadao Information Technology</span></div>
+    </div>
+
+    <div class="stop" style="--x: 42%; --y: 48%;">
+      <div class="pin"></div>
+      <div class="label">Bachelor’s Degree<span class="sub">California State University, Fullerton</span></div>
+    </div>
+
+    <div class="stop" style="--x: 58%; --y: 60%;">
+      <div class="pin"></div>
+      <div class="label">Software Developer<span class="sub">Edgelink Services LLC</span></div>
+    </div>
+
+    <div class="stop" style="--x: 73%; --y: 50%;">
+      <div class="pin"></div>
+      <div class="label">Web Developer<span class="sub">CRADI MEDTECH</span></div>
+    </div>
+
+    <div class="stop" style="--x: 88%; --y: 40%;">
+      <div class="pin"></div>
+      <div class="label">Master’s Program<span class="sub">Northeastern University</span></div>
+    </div>
+
+    <div class="stop final" style="--x: 86%; --y: 78%;">
+      <div class="pin"></div>
+      <div class="label">Summer Intern<span class="sub">1928 Tap &amp; Grill Catering Co.</span></div>
+    </div>
+
+    <div class="stop final" style="--x: 62%; --y: 85%;">
+      <div class="pin"></div>
+      <div class="label">Continue in NEU<span class="sub">Finish Master’s Degree</span></div>
+    </div>
+  </div>
+
+  <div class="timemap" aria-label="Career timeline scrolling list">
+    <div class="timemap-track">
+      <!-- Set A -->
+      <div class="timemap-row">
+        <span class="node">Fullerton College</span>
+        <span class="arrow">→</span>
+        <span class="node">QA Analyst Intern · Shanghai Jiadao Information Technology</span>
+        <span class="arrow">→</span>
+        <span class="node">California State University, Fullerton</span>
+        <span class="arrow">→</span>
+        <span class="node">Software Developer · Edgelink Services LLC</span>
+        <span class="arrow">→</span>
+        <span class="node">Web Developer · CRADI MEDTECH</span>
+        <span class="arrow">→</span>
+        <span class="node">Northeastern University</span>
+        <span class="arrow">→</span>
+        <span class="node">Intern · 1928 Tap &amp; Grill Catering Co.</span>
+        <span class="arrow">→</span>
+        <span class="node">Continue in NEU</span>
+      </div>
+
+      <!-- Set B (duplicate for seamless loop) -->
+      <div class="timemap-row" aria-hidden="true">
+        <span class="node">Fullerton College</span>
+        <span class="arrow">→</span>
+        <span class="node">QA Analyst Intern · Shanghai Jiadao Information Technology</span>
+        <span class="arrow">→</span>
+        <span class="node">California State University, Fullerton</span>
+        <span class="arrow">→</span>
+        <span class="node">Software Developer · Edgelink Services LLC</span>
+        <span class="arrow">→</span>
+        <span class="node">Web Developer · CRADI MEDTECH</span>
+        <span class="arrow">→</span>
+        <span class="node">Northeastern University</span>
+        <span class="arrow">→</span>
+        <span class="node">Intern · 1928 Tap &amp; Grill Catering Co.</span>
+        <span class="arrow">→</span>
+        <span class="node">Continue in NEU</span>
+      </div>
+    </div>
+  </div>
+  <p class="muted small">Hover the map to pause the runner.</p>
+  <hr class="section-divider">
+  <!-- Optional but recommended: reliable hover pause for SVG animateMotion -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const map = document.querySelector(".treasure");
+      const svg = document.querySelector(".treasure-svg");
+      if (!map || !svg || !svg.pauseAnimations) return;
+
+      map.addEventListener("mouseenter", () => svg.pauseAnimations());
+      map.addEventListener("mouseleave", () => svg.unpauseAnimations());
+    });
+  </script>
+</section>
+<section class="section">
+  <h2>Real-time System Performance</h2>
+  <p class="muted">Live telemetry: FPS, DOM, and Memory trends + Network diagnostics.
+    <br>Some features may not work in different browsers.</p>
+
+  <div class="perf">
+    <div class="perf-grid">
+      <div class="perf-card">
+        <div class="perf-label">Page FPS</div>
+        <div class="perf-value-group">
+          <div class="perf-value" id="perfFps">—</div>
+          <svg class="perf-graph" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true">
+            <polyline id="graphFps" fill="none" stroke="#3b82f6" stroke-width="2" points="0,30 100,30" />
+          </svg>
+        </div>
+        <div class="perf-sub" id="perfFpsSub">render loop stability</div>
+      </div>
+
+      <div class="perf-card">
+        <div class="perf-label">DOM Nodes</div>
+        <div class="perf-value-group">
+          <div class="perf-value" id="perfDom">—</div>
+          <svg class="perf-graph" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true">
+            <polyline id="graphDom" fill="none" stroke="#06b6d4" stroke-width="2" points="0,30 100,30" />
+          </svg>
+        </div>
+        <div class="perf-sub">elements in tree</div>
+      </div>
+
+      <div class="perf-card">
+        <div class="perf-label">Memory</div>
+        <div class="perf-value-group">
+          <div class="perf-value" id="perfMem">—</div>
+          <svg class="perf-graph" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true">
+            <polyline id="graphMem" fill="none" stroke="#fbbf24" stroke-width="2" points="0,30 100,30" />
+          </svg>
+        </div>
+        <div class="perf-sub" id="perfMemSub">JS heap usage</div>
+      </div>
+
+      <div class="perf-card wide">
+        <div class="perf-label">Internet Speed Test</div>
+
+        <!-- Keep 2 metrics to match your “Ping + Download only” logic -->
+        <div class="perf-row two">
+          <div class="metric">
+            <div class="metric-k">Ping</div>
+            <div class="metric-v" id="netPing">—</div>
+            <div class="metric-pulse" aria-hidden="true"></div>
+          </div>
+          <div class="metric">
+            <div class="metric-k">Download Speed</div>
+            <div class="metric-v" id="netDown">—</div>
+          </div>
+        </div>
+
+        <div class="perf-actions">
+          <button class="btn" id="btnSpeed">Start Test</button>
+          <button class="btn btn-ghost" id="btnStop">Stop</button>
+          <span class="perf-hint" id="netHint">Results depend on hardware & current congestion.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+</section>
+
+<script>
+(() => {
+  // ---------- Helpers ----------
+  function setText(el, text) { if (el) el.textContent = text; }
+
+  function updateSparkline(polylineEl, series, opts = {}) {
+    if (!polylineEl || !series.length) return;
+
+    const height = 30;
+    const width = 100;
+    const n = series.length;
+
+    // Auto-scale (with floor/ceiling to avoid tiny wiggles)
+    let min = Math.min(...series);
+    let max = Math.max(...series);
+
+    const pad = (max - min) * 0.15 || 1;
+    min -= pad;
+    max += pad;
+
+    if (opts.min != null) min = opts.min;
+    if (opts.max != null) max = opts.max;
+
+    const clamp = (v) => Math.max(min, Math.min(max, v));
+    const normY = (v) => {
+      const t = (clamp(v) - min) / (max - min || 1);
+      return (height - (t * height)); // invert (0=top)
+    };
+
+    const stepX = width / Math.max(1, (n - 1));
+    const pts = series.map((v, i) => `${(i * stepX).toFixed(2)},${normY(v).toFixed(2)}`).join(" ");
+    polylineEl.setAttribute("points", pts);
+  }
+
+  function makeRingBuffer(maxLen) {
+    const arr = [];
+    return {
+      push(v) {
+        arr.push(v);
+        if (arr.length > maxLen) arr.shift();
+      },
+      get() { return arr; },
+      last() { return arr[arr.length - 1]; }
+    };
+  }
+
+  // ---------- Elements ----------
+  const fpsEl = document.getElementById("perfFps");
+  const fpsSub = document.getElementById("perfFpsSub");
+  const domEl = document.getElementById("perfDom");
+  const memEl = document.getElementById("perfMem");
+  const memSub = document.getElementById("perfMemSub");
+
+  const gFps = document.getElementById("graphFps");
+  const gDom = document.getElementById("graphDom");
+  const gMem = document.getElementById("graphMem");
+
+  // ---------- Series buffers ----------
+  const fpsSeries = makeRingBuffer(40);
+  const domSeries = makeRingBuffer(40);
+  const memSeries = makeRingBuffer(40);
+
+  // ---------- FPS sampling ----------
+  let frames = 0;
+  let last = performance.now();
+  function loop(t) {
+    frames++;
+    const dt = t - last;
+    if (dt >= 1000) {
+      const fps = Math.round((frames * 1000) / dt);
+      setText(fpsEl, fps);
+
+      const mood = fps >= 55 ? "smooth" : fps >= 40 ? "ok" : "heavy";
+      setText(fpsSub, `render loop stability · ${mood}`);
+
+      fpsSeries.push(fps);
+      updateSparkline(gFps, fpsSeries.get(), { min: 0, max: 350 });
+
+      frames = 0;
+      last = t;
+    }
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  // ---------- DOM + Memory sampling ----------
+  setInterval(() => {
+    // DOM
+    const domCount = document.getElementsByTagName("*").length;
+    setText(domEl, domCount.toLocaleString());
+    domSeries.push(domCount);
+    updateSparkline(gDom, domSeries.get());
+
+    // Memory (Chrome)
+    const pm = performance && performance.memory;
+    if (!pm) {
+      setText(memEl, "N/A");
+      setText(memSub, "JS heap usage · not available in this browser");
+      return;
+    }
+    const usedMB = pm.usedJSHeapSize / (1024 * 1024);
+    const totalMB = pm.totalJSHeapSize / (1024 * 1024);
+    setText(memEl, `${usedMB.toFixed(0)} MB`);
+    setText(memSub, `JS heap usage · ${usedMB.toFixed(0)}/${totalMB.toFixed(0)} MB`);
+
+    memSeries.push(usedMB);
+    updateSparkline(gMem, memSeries.get());
+  }, 1000);
+
+  // ---------- Network (Ping + Download only) ----------
+  const btnSpeed = document.getElementById("btnSpeed");
+  const btnStop = document.getElementById("btnStop");
+  const pingEl = document.getElementById("netPing");
+  const downEl = document.getElementById("netDown");
+  const hintEl = document.getElementById("netHint");
+
+  let stopRequested = false;
+
+  function mbps(bytes, ms) {
+    const bits = bytes * 8;
+    const seconds = ms / 1000;
+    return (bits / seconds / 1e6);
+  }
+
+  async function measurePing(rounds = 5) {
+    const times = [];
+    for (let i = 0; i < rounds; i++) {
+      if (stopRequested) return null;
+      const t0 = performance.now();
+      await fetch("/monitor/ping?ts=" + Date.now(), { cache: "no-store" });
+      const t1 = performance.now();
+      times.push(t1 - t0);
+      await new Promise(r => setTimeout(r, 120));
+    }
+    times.sort((a, b) => a - b);
+    return times[Math.floor(times.length / 2)];
+  }
+
+  async function measureDownload(mb = 5) {
+    if (stopRequested) return null;
+    const url = `/monitor/download?mb=${mb}&ts=${Date.now()}`;
+    const t0 = performance.now();
+    const resp = await fetch(url, { cache: "no-store" });
+    const buf = await resp.arrayBuffer();
+    const t1 = performance.now();
+    return { bytes: buf.byteLength, ms: (t1 - t0) };
+  }
+
+  async function runSpeedTest() {
+    stopRequested = false;
+    if (btnSpeed) btnSpeed.disabled = true;
+    setText(hintEl, "Running…");
+    setText(pingEl, "…");
+    setText(downEl, "…");
+
+    try {
+      const ping = await measurePing(5);
+      if (ping == null) return;
+      setText(pingEl, `${Math.round(ping)} ms`);
+
+      const dl = await measureDownload(5);
+      if (!dl) return;
+      setText(downEl, `${mbps(dl.bytes, dl.ms).toFixed(1)} Mbps`);
+
+      setText(hintEl, "Done.");
+    } catch (e) {
+      setText(hintEl, "Test failed (try again).");
+    } finally {
+      if (btnSpeed) btnSpeed.disabled = false;
+    }
+  }
+
+  if (btnSpeed) btnSpeed.addEventListener("click", runSpeedTest);
+  if (btnStop) btnStop.addEventListener("click", () => {
+    stopRequested = true;
+    setText(hintEl, "Stopped.");
+    if (btnSpeed) btnSpeed.disabled = false;
+  });
+})();
+</script>
+
+<section class="section">
+  <h2>Portfolio Analytics</h2>
+  <p class="muted">First-party analytics (no third-party tracker): clicks, devices, and click patterns.</p>
+
+  <div class="grid ana-grid">
+    <!-- Left / Right -->
+    <div class="card">
+      <h3>Total Clicks</h3>
+      <p class="big" id="anaTotal">—</p>
+      <p class="meta">All-time page views (HTML responses only)</p>
+    </div>
+
+    <div class="card">
+      <h3>Daily Clicks</h3>
+      <p class="big" id="anaToday">—</p>
+      <p class="meta">Today (resets at local midnight)</p>
+    </div>
+  </div>
+    <!-- Full width -->
+     <div class="spacer" style="height:16px;"></div>
+    <div class="card span-2">
+      <div class="card-head">
+        <h3>Daily Clicks (21 days) + Forecast (3 days)</h3>
+        <p class="meta" id="anaMeta">Loading…</p>
+      </div>
+      <div class="chart-frame">
+        <canvas id="chartDaily" height="240"></canvas>
+      </div>
+      <p class="meta">Solid = actual · Dashed = forecast</p>
+    </div>
+      <div class="spacer" style="height:16px;"></div>
+  <div class="grid ana-grid">
+    <!-- Left / Right -->
+    <div class="card">
+      <h3>Device Distribution</h3>
+      <div class="chart-frame">
+        <canvas id="chartDevices" height="200"></canvas>
+      </div>
+      <p class="meta">Mobile / Computer / Other</p>
+    </div>
+
+    <div class="card">
+      <h3>Heatmap: When users click</h3>
+
+      <p class="meta" id="heatEmpty" style="display:none;">
+        Not enough data yet — come back after more visits.
+      </p>
+
+      <div class="heatmap">
+        <div class="heat-head" id="heatHead"></div>
+        <div class="heat-grid" id="heatGrid"></div>
+      </div>
+
+      <p class="meta">Weekday × time block (Night/Morning/Afternoon/Evening)</p>
+    </div>
+  </div>
+  <hr class="section-divider">
+</section>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+(async () => {
+  const totalEl = document.getElementById("anaTotal");
+  const todayEl = document.getElementById("anaToday");
+  const metaEl  = document.getElementById("anaMeta");
+
+  const heatHead = document.getElementById("heatHead");
+  const heatGrid = document.getElementById("heatGrid");
+  const heatEmpty = document.getElementById("heatEmpty");
+
+  // Fetch analytics
+  const res = await fetch("/analytics/data/", { cache: "no-store" });
+  const data = await res.json();
+
+  totalEl.textContent = (data.total_clicks ?? 0).toLocaleString();
+  todayEl.textContent = (data.today_clicks ?? 0).toLocaleString();
+  metaEl.textContent = `Timezone: ${data.meta.timezone} · Today: ${data.meta.today}`;
+
+  // ---- Trend chart (21 days + 3 day forecast)
+  const labels = data.daily.labels.concat(data.forecast.labels);
+  const actual = data.daily.counts;
+  const forecast = new Array(actual.length).fill(null).concat(data.forecast.counts);
+
+  new Chart(document.getElementById("chartDaily"), {
+    type: "line",
+    data: {
+      labels,
+      datasets: [
+        { label: "Clicks", data: actual, tension: 0.35, pointRadius: 2 },
+        { label: "Forecast", data: forecast, tension: 0.35, borderDash: [6,6], pointRadius: 2 },
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: "#cbd5e1" } } },
+      scales: {
+        x: { ticks: { color: "#94a3b8", maxTicksLimit: 8 }, grid: { color: "rgba(255,255,255,0.06)" } },
+        y: { beginAtZero: true, ticks: { color: "#94a3b8" }, grid: { color: "rgba(255,255,255,0.06)" } }
+      }
+    }
+  });
+
+  // ---- Device pie
+  const dev = data.devices || { mobile: 0, computer: 0, other: 0 };
+  new Chart(document.getElementById("chartDevices"), {
+    type: "pie",
+    data: {
+      labels: ["Mobile", "Computer", "Other"],
+      datasets: [{ data: [dev.mobile || 0, dev.computer || 0, dev.other || 0] }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: "bottom", labels: { color: "#cbd5e1" } } }
+    }
+  });
+
+  // ---- Heatmap (always render visible grid)
+  const hm = data.heatmap;
+  const weekdayLabels = hm.weekday_labels;
+  const blockLabels = hm.block_labels;
+  const matrix = hm.matrix;
+
+  // Render header row
+  heatHead.innerHTML =
+    `<div class="heat-corner"></div>` +
+    blockLabels.map(b => `<div class="heat-col">${b}</div>`).join("");
+
+  const flat = matrix.flat();
+  const maxV = Math.max(...flat);
+  const hasAny = maxV > 0;
+
+  // If no data, show message but still render the grid faintly
+  heatEmpty.style.display = hasAny ? "none" : "block";
+
+  heatGrid.innerHTML = weekdayLabels.map((day, r) => {
+    const cells = matrix[r].map(v => {
+      const t = hasAny ? (v / maxV) : 0;          // 0..1
+      const a = 0.16 + 0.72 * t;                  // always visible base
+      return `<div class="heat-cell"
+                   title="${day}: ${v} clicks"
+                   style="--a:${a.toFixed(3)}">${v ? v : ""}</div>`;
+    }).join("");
+
+    return `<div class="heat-row">
+              <div class="heat-day">${day}</div>
+              ${cells}
+            </div>`;
+  }).join("");
+})();
+</script>
+
+
+<section class="section" id="laborSection">
+  <h2>Job Market Snapshot (US)</h2>
+  <p class="muted">
+    Source: FRED (Federal Reserve Bank of St. Louis). National UNRATE & EMRATIO + latest state unemployment rates,
+     loaded via pandas_datareader. Therefore, it takes time load.
+  </p>
+
+  <div class="grid labor-grid">
+    <div class="card span-2">
+      <h3>National Trends (5 years)</h3>
+      <div class="chart-frame">
+        <canvas id="laborLine" height="120"></canvas>
+      </div>
+      <p class="meta" id="laborNote">Loading…</p>
+      <div class="card" style="margin-top: 5px;">
+      <h3>To anyone job hunting</h3>
+      <p class="meta" style="font-size: 14px; opacity: .85; line-height: 1.6;">
+        If you’re looking for a job right now, it can feel exhausting — and sometimes unfair.
+        But your effort compounds: every application sharpens your story, every interview improves your signal,
+        and every project makes you stronger. Keep going. Ask for feedback, ship small wins weekly, and don’t
+        measure your worth by one hiring cycle. You’ve got this. (by the way the data looks unreal)
+      </p>
+    </div>
+    </div>
+
+    <div class="card span-2">
+      <h3>Unemployment by State (latest)</h3>
+      <div class="map-frame">
+        <div id="usMap"></div>
+      </div>
+      <p class="meta">Tip: hover a state to see its value.</p>
+    </div>
+
+  </div>
+
+  <hr class="section-divider">
+</section>
+
+<!-- Chart.js + Plotly (CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.30.0/plotly.min.js"></script>
+<script>
+(() => {
+  const section = document.getElementById("laborSection");
+  const noteEl = document.getElementById("laborNote");
+
+  if (!section || !noteEl) return;
+
+  let started = false;
+  let mapDiv = null;
+
+  async function initLabor() {
+    if (started) return;
+    started = true;
+
+    noteEl.textContent = "Loading… (fetching from FRED)";
+
+    try {
+      const res = await fetch("/labor/data/", { cache: "no-store" });
+      const data = await res.json();
+
+      if (data.error) {
+        noteEl.textContent = data.error;
+        return;
+      }
+
+      // ---- Line chart (national) ----
+      const labels = data.national.labels;
+      const unrate = data.national.unemployment_rate;
+      const emratio = data.national.employment_pop_ratio;
+
+      const ctx = document.getElementById("laborLine");
+      if (!ctx) {
+        noteEl.textContent = "Chart canvas not found.";
+        return;
+      }
+
+      new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [
+            { label: "Unemployment Rate (%)", data: unrate, tension: 0.35, pointRadius: 1.5 },
+            { label: "Employment-Population Ratio (%)", data: emratio, tension: 0.35, pointRadius: 1.5 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: "#cbd5e1" } } },
+          scales: {
+            x: { ticks: { color: "#94a3b8", maxTicksLimit: 8 }, grid: { color: "rgba(255,255,255,0.06)" } },
+            y: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(255,255,255,0.06)" } }
+          }
+        }
+      });
+
+      noteEl.textContent = data.national.note || "Loaded.";
+
+      // ---- US map (state unemployment latest) ----
+      const stateMap = data.states?.latest_unemployment_rate || {};
+      const entries = Object.entries(stateMap).filter(([abbr, val]) => val !== null && val !== undefined);
+      const locations = entries.map(([abbr]) => abbr);
+      const z = entries.map(([, val]) => val);
+
+      mapDiv = document.getElementById("usMap");
+      if (!mapDiv || locations.length === 0) return;
+
+      await Plotly.newPlot(mapDiv, [{
+        type: "choropleth",
+        locationmode: "USA-states",
+        locations,
+        z,
+        hovertemplate: "%{location}: %{z:.1f}%<extra></extra>",
+        showscale: true,
+        colorbar: {
+          orientation: "h",
+          x: 0.5,
+          xanchor: "center",
+          y: 0.02,          // inside-bottom
+          yanchor: "bottom",
+          len: 0.62,
+          thickness: 12,
+          tickformat: ".1f",
+          bgcolor: "rgba(2,6,23,0.65)",
+          bordercolor: "rgba(255,255,255,0.12)",
+          borderwidth: 1,
+          title: { text: "Unemployment Rate (%)", side: "top" }
+        }
+      }], {
+        geo: { scope: "usa" },
+        margin: { t: 0, r: 0, b: 0, l: 0 },
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(0,0,0,0)",
+        autosize: true
+      }, { displayModeBar: false, responsive: true });
+
+      // Keep Plotly fitted on resize (only after created)
+      const resizePlot = () => {
+        if (mapDiv && mapDiv.offsetParent !== null) Plotly.Plots.resize(mapDiv);
+      };
+      window.addEventListener("resize", resizePlot);
+      resizePlot();
+
+    } catch (e) {
+      noteEl.textContent = "Failed to load labor data.";
+    }
+  }
+
+  // Load when user scrolls near the section
+  const io = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        initLabor();
+        io.disconnect();
+      }
+    }
+  }, { rootMargin: "400px 0px" }); // start early before it enters
+
+  io.observe(section);
+})();
+</script>
+
+
+<link rel="stylesheet" href="{% static 'css/AboutMe.css' %}">
+<section class="section" id="about">
+  <h2>About Me</h2>
+  <p class="muted">Outside of coding, I recharge with travel, stargazing, and pets (more of a dog person, but cats are cool too).</p>
+
+  <div class="about-carousel" aria-label="About me interests carousel">
+    <div class="about-carousel-head">
+      <div class="about-carousel-dots" id="aboutDots" aria-hidden="true"></div>
+
+      <div class="about-carousel-actions">
+        <button class="about-btn" type="button" id="aboutPrev" aria-label="Previous card">‹</button>
+        <button class="about-btn" type="button" id="aboutNext" aria-label="Next card">›</button>
+      </div>
+    </div>
+
+    <!-- Track: 3 cards -->
+    <div class="about-track" id="aboutTrack">
+      <!-- Card 1 -->
+      <article class="about-card" data-title="Traveling">
+        <div class="about-card-top">
+          <h3>Traveling</h3>
+          <p class="meta">New cities, new food, new stories.</p>
+        </div>
+
+        <!-- inner slider -->
+        <div class="about-media" data-slider>
+          <div class="about-media-viewport">
+            <div class="about-media-strip">
+              <img src="{% static 'img/about/travel_1.jpg' %}" alt="Travel photo 1" loading="lazy">
+              <img src="{% static 'img/about/travel_2.jpg' %}" alt="Travel photo 2" loading="lazy">
+              <img src="{% static 'img/about/travel_3.png' %}" alt="Travel photo 3" loading="lazy">
+            </div>
+          </div>
+
+          <div class="about-media-controls">
+            <button class="about-mini-btn" type="button" data-prev aria-label="Previous photo">‹</button>
+            <div class="about-mini-dots" data-dots aria-hidden="true"></div>
+            <button class="about-mini-btn" type="button" data-next aria-label="Next photo">›</button>
+          </div>
+        </div>
+
+        <p class="about-blurb">
+          I love planning routes, hunting for local food, and collecting small “wow” moments from each trip.
+        </p>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="about-card" data-title="Stargazing">
+        <div class="about-card-top">
+          <h3>Stargazing</h3>
+          <p class="meta">Orion, meteor showers, and quiet nights.</p>
+        </div>
+
+        <div class="about-media" data-slider>
+          <div class="about-media-viewport">
+            <div class="about-media-strip">
+              <img src="{% static 'img/about/stars_1.jpg' %}" alt="Stargazing photo 1" loading="lazy">
+              <img src="{% static 'img/about/stars_2.jpg' %}" alt="Stargazing photo 2" loading="lazy">
+              <img src="{% static 'img/about/stars_3.jpg' %}" alt="Stargazing photo 3" loading="lazy">
+            </div>
+          </div>
+
+          <div class="about-media-controls">
+            <button class="about-mini-btn" type="button" data-prev aria-label="Previous photo">‹</button>
+            <div class="about-mini-dots" data-dots aria-hidden="true"></div>
+            <button class="about-mini-btn" type="button" data-next aria-label="Next photo">›</button>
+          </div>
+        </div>
+
+        <p class="about-blurb">
+          Stargazing resets my brain. I like calm nights, big skies, and spotting constellations.
+        </p>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="about-card" data-title="Cats & Dogs">
+        <div class="about-card-top">
+          <h3>Cats &amp; Dogs</h3>
+          <p class="meta">Dog energy + cat vibes = perfect balance.</p>
+        </div>
+
+        <div class="about-media" data-slider>
+          <div class="about-media-viewport">
+            <div class="about-media-strip">
+              <img src="{% static 'img/about/pets_1.jpg' %}" alt="Pet photo 1" loading="lazy">
+              <img src="{% static 'img/about/pets_2.jpg' %}" alt="Pet photo 2" loading="lazy">
+              <img src="{% static 'img/about/pets_3.jpg' %}" alt="Pet photo 3" loading="lazy">
+            </div>
+          </div>
+
+          <div class="about-media-controls">
+            <button class="about-mini-btn" type="button" data-prev aria-label="Previous photo">‹</button>
+            <div class="about-mini-dots" data-dots aria-hidden="true"></div>
+            <button class="about-mini-btn" type="button" data-next aria-label="Next photo">›</button>
+          </div>
+        </div>
+
+        <p class="about-blurb">
+          I’m more of a dog person — but I appreciate the cat attitude. Both make life better.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<script>
+(() => {
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---------------------------
+  // Outer carousel (cards)
+  // ---------------------------
+  const track = document.getElementById("aboutTrack");
+  const prevBtn = document.getElementById("aboutPrev");
+  const nextBtn = document.getElementById("aboutNext");
+  const dotsWrap = document.getElementById("aboutDots");
+
+  // Safety: if section not present, do nothing
+  if (!track || !prevBtn || !nextBtn || !dotsWrap) return;
+
+  const cards = Array.from(track.querySelectorAll(".about-card"));
+
+  function getGapPx() {
+    const styles = getComputedStyle(track);
+    return parseFloat(styles.columnGap || styles.gap || "0") || 0;
+  }
+
+  function getCardWidth() {
+    const first = cards[0];
+    if (!first) return 0;
+    const gap = getGapPx();
+    return first.getBoundingClientRect().width + gap;
+  }
+
+  // Dots for number of cards
+  dotsWrap.innerHTML = cards.map(() => `<span class="dot"></span>`).join("");
+  const dots = Array.from(dotsWrap.querySelectorAll(".dot"));
+
+  function currentIndex() {
+    const w = getCardWidth() || 1;
+    // floor is more stable than round when multiple cards are visible
+    return Math.max(0, Math.min(cards.length - 1, Math.floor((track.scrollLeft + 2) / w)));
+  }
+
+  function setActiveDot() {
+    const idx = currentIndex();
+    dots.forEach((d, i) => d.classList.toggle("active", i === idx));
+  }
+
+  function scrollToIndex(idx) {
+    const w = getCardWidth();
+    if (!w) return;
+    track.scrollTo({ left: idx * w, behavior: reduceMotion ? "auto" : "smooth" });
+  }
+
+  function scrollByCard(dir) {
+    scrollToIndex(currentIndex() + dir);
+  }
+
+  prevBtn.addEventListener("click", () => scrollByCard(-1));
+  nextBtn.addEventListener("click", () => scrollByCard(1));
+
+  // Click dots to jump
+  dots.forEach((d, i) => d.addEventListener("click", () => scrollToIndex(i)));
+
+  let raf = null;
+  track.addEventListener("scroll", () => {
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(setActiveDot);
+  });
+
+  window.addEventListener("resize", () => {
+    // keep aligned after resize
+    scrollToIndex(currentIndex());
+    setActiveDot();
+  });
+
+  setActiveDot();
+
+  // Autoplay cards every 8s (pause on hover / user interaction)
+  let cardTimer = null;
+  let userInteracting = false;
+
+  function startCardAuto() {
+    if (reduceMotion) return;
+    if (cardTimer) clearInterval(cardTimer);
+    cardTimer = setInterval(() => {
+      if (userInteracting) return;
+      const idx = currentIndex();
+      const next = (idx + 1) % cards.length;
+      scrollToIndex(next);
+    }, 8000);
+  }
+
+  function stopCardAuto() {
+    if (cardTimer) clearInterval(cardTimer);
+    cardTimer = null;
+  }
+
+  track.addEventListener("mouseenter", () => { userInteracting = true; });
+  track.addEventListener("mouseleave", () => { userInteracting = false; });
+
+  // Detect touch/drag scroll so autoplay doesn't fight the user
+  track.addEventListener("pointerdown", () => { userInteracting = true; });
+  track.addEventListener("pointerup", () => { userInteracting = false; });
+  track.addEventListener("touchstart", () => { userInteracting = true; }, { passive: true });
+  track.addEventListener("touchend", () => { userInteracting = false; }, { passive: true });
+
+  startCardAuto();
+
+  // ---------------------------
+  // Inner sliders (images per card)
+  // ---------------------------
+  const sliders = Array.from(track.querySelectorAll("[data-slider]"));
+
+  sliders.forEach((slider) => {
+    const strip = slider.querySelector(".about-media-strip");
+    const imgs = Array.from(strip?.querySelectorAll("img") || []);
+    const btnPrev = slider.querySelector("[data-prev]");
+    const btnNext = slider.querySelector("[data-next]");
+    const dotsEl = slider.querySelector("[data-dots]");
+
+    if (!strip || imgs.length === 0 || !btnPrev || !btnNext || !dotsEl) return;
+
+    let idx = 0;
+    dotsEl.innerHTML = imgs.map(() => `<span class="dot"></span>`).join("");
+    const dots2 = Array.from(dotsEl.querySelectorAll(".dot"));
+
+    function render() {
+      strip.style.transform = `translateX(-${idx * 100}%)`;
+      dots2.forEach((d, i) => d.classList.toggle("active", i === idx));
+    }
+
+    function go(step) {
+      idx = (idx + step + imgs.length) % imgs.length;
+      render();
+    }
+
+    btnPrev.addEventListener("click", () => go(-1));
+    btnNext.addEventListener("click", () => go(1));
+    dots2.forEach((d, i) => d.addEventListener("click", () => { idx = i; render(); }));
+
+    // autoplay images every 3.5s, pause on hover
+    let t = null;
+    function start() {
+      if (reduceMotion) return;
+      stop();
+      t = setInterval(() => go(1), 3500);
+    }
+    function stop() {
+      if (t) clearInterval(t);
+      t = null;
+    }
+
+    slider.addEventListener("mouseenter", stop);
+    slider.addEventListener("mouseleave", start);
+
+    render();
+    start();
+  });
+})();
+</script>
+
+<link rel="stylesheet" href="{% static 'css/ContactMe.css' %}">
+<section class="section" id="contact">
+  <div class="contact-header">
+    <h2 class="display-title">Let's Connect</h2>
+    <p class="muted">
+      Whether you have a question or just want to say hi, my inbox is always open.
+    </p>
+  </div>
+
+  <div class="contact-container">
+    <div class="glass-card contact-form-wrapper">
+      <form class="contact-form" method="post" action="{% url 'contact' %}">
+        {% csrf_token %}
+        <div class="form-grid">
+          <div class="field-group">
+            <input name="name" type="text" id="name" required placeholder=" ">
+            <label for="name">Your Name</label>
+          </div>
+
+          <div class="field-group">
+            <input name="email" type="email" id="email" required placeholder=" ">
+            <label for="email">Email Address</label>
+          </div>
+
+          <div class="field-group full-width">
+            <input name="subject" type="text" id="subject" required placeholder=" ">
+            <label for="subject">Subject</label>
+          </div>
+
+          <div class="field-group full-width">
+            <textarea name="message" id="message" rows="5" required placeholder=" "></textarea>
+            <label for="message">Your Message</label>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <button class="submit-btn" type="submit">
+            <span>Send Message</span>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="contact-sidebar">
+      <div class="glass-card info-block">
+        <h3>Availability</h3>
+        <p class="status-tag"><span class="Cdot"></span> Open for opportunities</p>
+        <ul class="role-list">
+          <li>Full-Stack Development</li>
+          <li>Frontend Architecture</li>
+          <li>Software Internships</li>
+        </ul>
+      </div>
+
+      <div class="glass-card info-block">
+        <h3>Direct Channels</h3>
+        <div class="social-stack">
+          <a href="mailto:xuzhihuieateat@gmail.com" class="social-link">
+            <span>Email</span>
+            <small>xuzhihuieateat@gmail.com</small>
+          </a>
+          <a href="https://www.linkedin.com/in/zhihui-xu-27ba65258/" class="social-link">LinkedIn</a>
+          <a href="https://github.com/xuzhihuiCSY" class="social-link">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+(() => {
+  const sec = document.getElementById("contact");
+  const form = sec?.querySelector("form");
+  if (!sec || !form) return;
+
+  let bound = false;
+
+  function bind() {
+    if (bound) return;
+    bound = true;
+
+    form.addEventListener("submit", (e) => {
+      // Example: basic client-side check
+      const name = form.querySelector('[name="name"]')?.value?.trim();
+      const email = form.querySelector('[name="email"]')?.value?.trim();
+      const subject = form.querySelector('[name="subject"]')?.value?.trim();
+      const message = form.querySelector('[name="message"]')?.value?.trim();
+
+      if (!name || !email || !subject || !message) {
+        e.preventDefault();
+        alert("Please fill out all fields.");
+      }
+    });
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    if (entries.some(e => e.isIntersecting)) {
+      bind();
+      io.disconnect();
+    }
+  }, { rootMargin: "250px 0px" });
+
+  io.observe(sec);
+})();
+</script>
+
+</section>
+
+{% endblock %}

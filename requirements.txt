@@ -1,0 +1,8 @@
+Django>=6.0,<6.1
+gunicorn>=23.0,<24.0
+numpy>=2.0
+pandas>=2.2
+requests>=2.32
+pandas-datareader>=0.10
+yfinance>=0.2
+yahooquery>=2.3

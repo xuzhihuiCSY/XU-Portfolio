@@ -1,0 +1,227 @@
+.stock-carousel{ margin-top: 12px; }
+.stock-carousel-head{
+  display:flex; align-items:center; justify-content:space-between;
+  gap: 12px; margin-bottom: 10px;
+}
+.stock-actions{ display:flex; gap: 10px; }
+
+.stock-dots{ display:flex; gap: 8px; align-items:center; }
+.stock-dots .dot{
+  width:8px; height:8px; border-radius:999px;
+  background: rgba(255,255,255,0.18);
+  transition: width .18s ease, background .18s ease;
+  cursor:pointer;
+}
+.stock-dots .dot.active{ width:22px; background: rgba(59,130,246,0.75); }
+
+.stock-track{
+  display:grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  gap: 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+.stock-track::-webkit-scrollbar{ height: 8px; }
+.stock-track::-webkit-scrollbar-thumb{ background: rgba(255,255,255,0.10); border-radius: 999px; }
+
+.stock-card{
+  scroll-snap-align: start;
+  border: 1px solid #1d2430;
+  background: #0f131a;
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.22);
+}
+
+.stock-top{
+  display:flex; align-items:flex-start; justify-content:space-between; gap: 12px;
+  margin-bottom: 12px;
+}
+.stock-price{ text-align:right; font-size: 22px; font-weight: 900; }
+.stock-price .chg{ display:block; font-size: 12px; font-weight: 700; margin-top: 4px; opacity:.9; }
+.stock-price .up{ color: #34d399; }
+.stock-price .down{ color: #fb7185; }
+
+.stock-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.stock-grid .span-2{ grid-column: 1 / -1; }
+
+.stock-metrics{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 8px;
+}
+.metric{
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(2,6,23,0.35);
+  border-radius: 14px;
+  padding: 10px;
+  text-align:center;
+}
+.metric-k{ font-size: 10px; opacity:.7; text-transform: uppercase; letter-spacing: 1px; }
+.metric-v{ font-size: 14px; font-weight: 900; margin-top: 6px; }
+
+.jsonbox{
+  margin: 0;
+  border-radius: 14px;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(2,6,23,0.35);
+  max-height: 240px;
+  overflow:auto;
+}
+
+.tabs{ display:flex; gap: 10px; margin: 8px 0 10px; flex-wrap: wrap; }
+.tab{
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(2,6,23,0.35);
+  color: rgba(255,255,255,0.9);
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor:pointer;
+  font-weight: 700;
+  font-size: 12px;
+}
+.tab.active{ border-color: rgba(59,130,246,0.35); background: rgba(59,130,246,0.10); }
+
+.pane{ display:none; }
+.pane.active{ display:block; }
+
+.table-wrap{ overflow:auto; border-radius: 14px; border: 1px solid rgba(255,255,255,0.06); }
+.tbl{ width: 100%; border-collapse: collapse; font-size: 12px; }
+.tbl th, .tbl td{ padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.tbl th{ text-align:left; opacity:.75; background: rgba(2,6,23,0.25); position: sticky; top: 0; }
+.mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+
+
+/* Recommended Fix */
+@media (max-width: 900px){
+  .stock-grid{ grid-template-columns: 1fr; }
+  /* Keep metrics side-by-side even on mobile */
+  .stock-metrics{ grid-template-columns: repeat(3, 1fr); } 
+}
+
+.chart-frame{
+  position: relative;
+  height: 300px;
+  width: 98%;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(2,6,23,0.35);
+  border-radius: 16px;
+  padding: 5px;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.22);
+  margin-bottom: 16px;
+}
+
+
+.row-between{
+  display:flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.signal-box{
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(2,6,23,0.35);
+  border-radius: 14px;
+  padding: 12px;
+}
+.signal-row{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.signal-pill{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.10);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: .3px;
+}
+.signal-pill.bull{ background: rgba(34,197,94,0.10); border-color: rgba(34,197,94,0.25); }
+.signal-pill.neutral{ background: rgba(148,163,184,0.08); border-color: rgba(148,163,184,0.20); }
+.signal-pill.bear{ background: rgba(244,63,94,0.10); border-color: rgba(244,63,94,0.25); }
+
+.signal-list{
+  margin: 0;
+  padding-left: 16px;
+  display: grid;
+  gap: 6px;
+}
+.signal-list li{ line-height: 1.4; }
+
+/* =========================
+   Mobile fixes for Stocks
+   ========================= */
+
+/* Make the "inner cards" predictable (don't rely on global .card) */
+.stock-card .card{
+  border: 1px solid #1d2430;
+  background: #0f131a;
+  padding: 16px;
+  border-radius: 16px;
+  overflow: hidden;
+  min-width: 0;              /* important for flex/grid overflow */
+}
+
+/* Fix header wrapping on small widths */
+@media (max-width: 700px){
+  .stock-carousel-head{
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .stock-dots{
+    flex-wrap: wrap;
+  }
+}
+
+/* Real phone breakpoint (your 535px case) */
+@media (max-width: 600px){
+  /* Stack title + price instead of squeezing */
+  .stock-top{
+    flex-wrap: wrap;
+  }
+  .stock-price{
+    text-align: left;
+    width: 100%;
+  }
+
+  /* Make the 2-col grid become 1-col */
+  .stock-grid{
+    grid-template-columns: 1fr;
+  }
+
+  /* Metrics should stack (3 columns is too tight) */
+  .stock-metrics{
+    grid-template-columns: 1fr;
+  }
+
+  /* Chart frame should be full width and shorter */
+  .chart-frame{
+    width: 95%;
+    height: 240px;
+    padding: 10px;
+  }
+}
+
+/* Smallest phones */
+@media (max-width: 420px){
+  .stock-card{ padding: 12px; }
+  .stock-card .card{ padding: 12px; }
+  .chart-frame{ height: 220px; }
+}
+

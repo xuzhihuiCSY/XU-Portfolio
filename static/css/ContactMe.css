@@ -1,0 +1,151 @@
+/* Container & Layout */
+.contact-container {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 24px;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+  margin: 16px 0;
+}
+
+/* Floating Label Logic */
+.field-group {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.field-group input, 
+.field-group textarea {
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  transition: 0.3s;
+}
+
+.field-group input{
+    width: 90%;
+}
+
+.field-group textarea {
+  width: 95%;
+  min-height: 200px;
+  resize: vertical;
+}
+
+.field-group label {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  color: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  transition: 0.3s;
+}
+
+/* Floating effect on focus/content */
+.field-group input:focus ~ label,
+.field-group input:not(:placeholder-shown) ~ label,
+.field-group textarea:focus ~ label,
+.field-group textarea:not(:placeholder-shown) ~ label {
+  top: -10px;
+  left: 12px;
+  font-size: 0.75rem;
+  background: #1a1a1a;
+  padding: 0 8px;
+  color: #3b82f6;
+}
+
+.field-group input:focus, .field-group textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
+}
+
+/* Grid & Buttons */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.full-width { grid-column: span 2; }
+
+.submit-btn {
+  background: #fff;
+  color: #000;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  background: #3b82f6;
+  color: #fff;
+}
+
+/* Sidebar Styling */
+.status-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #10b981;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.Cdot {
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.social-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.social-link {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 12px;
+  text-decoration: none;
+  color: #fff;
+  transition: 0.2s;
+}
+
+.social-link:hover {
+  background: rgba(255,255,255,0.08);
+  padding-left: 18px;
+}
+
+.social-link small { opacity: 0.5; font-size: 0.75rem; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .contact-container { grid-template-columns: 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+  .full-width { grid-column: span 1; }
+}
