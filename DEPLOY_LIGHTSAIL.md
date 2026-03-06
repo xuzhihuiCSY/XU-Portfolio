@@ -62,6 +62,7 @@ User=www-data
 Group=www-data
 WorkingDirectory=/var/www/XU-Portfolio
 EnvironmentFile=/var/www/XU-Portfolio/.env
+ExecStartPre=-/var/www/XU-Portfolio/.venv/bin/python /var/www/XU-Portfolio/manage.py warm_labor_cache
 ExecStart=/var/www/XU-Portfolio/.venv/bin/gunicorn config.wsgi:application --bind 127.0.0.1:8000 --workers 3
 Restart=always
 RestartSec=5
@@ -78,6 +79,14 @@ sudo systemctl daemon-reload
 sudo systemctl enable xu-portfolio
 sudo systemctl start xu-portfolio
 sudo systemctl status xu-portfolio
+```
+
+Manual warm-up (optional):
+
+```bash
+source /var/www/XU-Portfolio/.venv/bin/activate
+cd /var/www/XU-Portfolio
+python manage.py warm_labor_cache
 ```
 
 ## 5. Nginx reverse proxy
