@@ -1,24 +1,12 @@
 # stocks/views.py
 from __future__ import annotations
 
+from typing import Any
+
 from django.core.cache import cache
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_GET
-
-import pandas as pd
-import yfinance as yf
-from yahooquery import Ticker
-
-from .services import (
-    compute_rsi,
-    compute_boll,
-    compute_kdj,
-    safe_float,
-    to_series_list,
-    pick_columns_case_insensitive,
-    df_to_records,
-)
 
 STOCKS = [
     {"symbol": "TSLA", "name": "Tesla"},
@@ -42,7 +30,9 @@ def _safe_get_dict(obj, key: str) -> dict:
     return {}
 
 
-def _normalize_recommendation_trend(rec_raw, symbol: str):
+def _normalize_recommendation_trend(rec_raw: Any, symbol: str):
+    import pandas as pd
+
     try:
         if isinstance(rec_raw, pd.DataFrame):
             df = rec_raw.copy()
@@ -57,11 +47,13 @@ def _normalize_recommendation_trend(rec_raw, symbol: str):
         return None
 
 
-def _normalize_statement_df(raw, symbol: str) -> pd.DataFrame:
+def _normalize_statement_df(raw: Any, symbol: str):
     """
     yahooquery statements should return a DataFrame.
     Index by asOfDate if available, sort newest first.
     """
+    import pandas as pd
+
     if raw is None or not isinstance(raw, pd.DataFrame) or raw.empty:
         return pd.DataFrame()
 
@@ -84,6 +76,20 @@ def _normalize_statement_df(raw, symbol: str) -> pd.DataFrame:
 
 @require_GET
 def stock_data(request, symbol: str):
+    import pandas as pd
+    import yfinance as yf
+    from yahooquery import Ticker
+
+    from .services import (
+        compute_rsi,
+        compute_boll,
+        compute_kdj,
+        safe_float,
+        to_series_list,
+        pick_columns_case_insensitive,
+        df_to_records,
+    )
+
     symbol = symbol.upper().strip()
     if symbol not in ALLOWED:
         return JsonResponse({"error": "Symbol not allowed."}, status=400)

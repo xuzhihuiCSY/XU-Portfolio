@@ -1,7 +1,5 @@
 from datetime import date, timedelta
-import pandas as pd
 import requests
-from pandas_datareader.data import DataReader
 from django.http import JsonResponse
 
 # 50 states + DC (Plotly uses state abbreviations)
@@ -16,7 +14,12 @@ def _last_5_years_start():
 
 def _safe_float(x):
     try:
-        return None if pd.isna(x) else float(x)
+        if x is None:
+            return None
+        value = float(x)
+        if value != value:  # NaN check
+            return None
+        return value
     except Exception:
         return None
 
@@ -39,6 +42,9 @@ def _fred_session() -> requests.Session:
     return s
 
 def labor_data(request):
+    import pandas as pd
+    from pandas_datareader.data import DataReader
+
     start = _last_5_years_start()
     end = date.today()
     session = _fred_session()
