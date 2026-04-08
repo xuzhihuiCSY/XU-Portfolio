@@ -13,7 +13,7 @@ Recommended: Ubuntu with at least 2 GB RAM.
 Open firewall ports:
 - 22 (SSH)
 - 80 (HTTP)
-- 443 (HTTPS, if you add TLS)
+- 443 (HTTPS)
 - 10086 (only if you enable V2Ray profile)
 
 ## 2. Install Docker and Compose plugin
@@ -50,6 +50,7 @@ Edit `.env` and set at minimum:
 - `DJANGO_ALLOWED_HOSTS`
 - `DJANGO_CSRF_TRUSTED_ORIGINS`
 - `POSTGRES_PASSWORD`
+- `LETSENCRYPT_EMAIL`
 
 ## 4. Start services
 
@@ -63,7 +64,40 @@ Optional: start VPN service too
 docker compose --profile vpn up -d
 ```
 
-## 5. Verify
+## 5. Enable HTTPS (container Nginx + Let's Encrypt)
+
+Make sure DNS A records for `xuzhihui-resume.com` and `www.xuzhihui-resume.com` already point to this instance.
+
+Issue certificate (webroot validation through running nginx):
+
+```bash
+docker compose run --rm --profile tls certbot certonly \
+  --webroot -w /var/www/certbot \
+  -d xuzhihui-resume.com -d www.xuzhihui-resume.com \
+  --email "$LETSENCRYPT_EMAIL" --agree-tos --no-eff-email
+```
+
+Switch nginx config to SSL config and restart:
+
+```bash
+cp docker/nginx/default-ssl.conf docker/nginx/default.conf
+docker compose up -d nginx
+```
+
+After HTTPS is up, set `DJANGO_SECURE_SSL_REDIRECT=True` in `.env` and restart web:
+
+```bash
+docker compose up -d web
+```
+
+Renew certificates (run periodically, e.g. cron):
+
+```bash
+docker compose run --rm --profile tls certbot renew --webroot -w /var/www/certbot
+docker compose up -d nginx
+```
+
+## 6. Verify
 
 ```bash
 docker compose ps
@@ -75,9 +109,10 @@ Check app:
 
 ```bash
 curl -I http://127.0.0.1
+curl -I https://xuzhihui-resume.com
 ```
 
-## 6. Update flow
+## 7. Update flow
 
 ```bash
 cd /home/ubuntu/XU-Portfolio
@@ -85,7 +120,7 @@ git pull
 docker compose up -d --build
 ```
 
-## 7. Backup PostgreSQL
+## 8. Backup PostgreSQL
 
 ```bash
 docker exec -t xu_db pg_dump -U "$POSTGRES_USER" "$POSTGRES_DB" > backup_$(date +%F).sql
