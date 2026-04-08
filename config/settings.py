@@ -28,6 +28,16 @@ def env_list(name: str, default: str = "") -> list[str]:
     return [item.strip() for item in value.split(",") if item.strip()]
 
 
+def env_int(name: str, default: int) -> int:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    try:
+        return int(value)
+    except ValueError:
+        return default
+
+
 DEBUG = env_bool("DJANGO_DEBUG", True)
 SECRET_KEY = os.getenv(
     "DJANGO_SECRET_KEY",
@@ -54,6 +64,7 @@ INSTALLED_APPS = [
     "site_analytics",
     "labor",
     "stocks",
+    "leaderboard",
 ]
 
 MIDDLEWARE = [
@@ -89,13 +100,32 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+DB_ENGINE = os.getenv("DB_ENGINE", "sqlite").strip().lower()
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+if DB_ENGINE in {"postgres", "postgresql"}:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("POSTGRES_DB", "xu_portfolio"),
+            "USER": os.getenv("POSTGRES_USER", "xu_portfolio"),
+            "PASSWORD": os.getenv("POSTGRES_PASSWORD", "change-me"),
+            "HOST": os.getenv("POSTGRES_HOST", "db"),
+            "PORT": env_int("POSTGRES_PORT", 5432),
+            "CONN_MAX_AGE": env_int("DB_CONN_MAX_AGE", 600),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+            "OPTIONS": {
+                "timeout": 30,  # Wait up to 30s for lock release before timeout
+                "init_command": "PRAGMA journal_mode=WAL;",  # Enable Write-Ahead Logging for better concurrency
+            },
+            "CONN_MAX_AGE": env_int("DB_CONN_MAX_AGE", 600),
+        }
+    }
 
 
 # Password validation

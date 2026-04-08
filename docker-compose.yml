@@ -1,0 +1,56 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: xu_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    container_name: xu_web
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - static_data:/app/staticfiles
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: xu_nginx
+    restart: unless-stopped
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_data:/srv/static:ro
+
+  v2ray:
+    image: v2fly/v2fly-core:v5.20.0
+    container_name: xu_v2ray
+    restart: unless-stopped
+    profiles: ["vpn"]
+    command: ["run", "-config", "/etc/v2ray/config.json"]
+    volumes:
+      - ./docker/v2ray/config.json:/etc/v2ray/config.json:ro
+    ports:
+      - "10086:10086/tcp"
+      - "10086:10086/udp"
+
+volumes:
+  postgres_data:
+  static_data:

@@ -12,6 +12,15 @@ def home(request):
     # homepage render
     return render(request, "pages/home.html", _home_context())
 
+
+def privacy(request):
+    return render(request, "pages/privacy.html", {
+        "site_name": "XU-Portfolio",
+        "app_name": "SnakeGame",
+        "contact_email": "xuzhihuieateat@gmail.com",
+        "last_updated": "2026-04-01",
+    })
+
 def contact(request):
     """
     Handles the Contact Me form submission.

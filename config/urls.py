@@ -25,4 +25,5 @@ urlpatterns = [
     path("analytics/", include("site_analytics.urls")),
     path("labor/", include("labor.urls")),
     path("stocks/", include("stocks.urls")),
+    path("api/leaderboard/", include("leaderboard.urls")),
 ]
