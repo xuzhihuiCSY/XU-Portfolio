@@ -15,11 +15,24 @@ def home(request):
 
 
 def privacy(request):
+    covered_apps = [
+        {
+            "name": "Advanced SnakeGame",
+            "platform": "Google Play",
+        },
+        {
+            "name": "Let's JumpRope",
+            "platform": "Google Play",
+        },
+    ]
+
     return render(request, "pages/privacy.html", {
         "site_name": "XU-Portfolio",
-        "app_name": "SnakeGame",
+        "developer_entity_name": "Zhihui Xu",
+        "developer_entity_type": "Individual Developer",
+        "covered_apps": covered_apps,
         "contact_email": "xuzhihuieateat@gmail.com",
-        "last_updated": "2026-04-15",
+        "last_updated": "2026-04-19",
     })
 
 

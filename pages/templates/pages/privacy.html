@@ -10,6 +10,21 @@
     when you use any of our published software products, including mobile applications and related services.
   </p>
   <p>
+    <strong>Publisher / Data Controller:</strong> {{ developer_entity_name }} ({{ developer_entity_type }})
+  </p>
+  <p>
+    This Privacy Policy applies to the apps listed below and other apps published under the same developer entity,
+    unless a specific app provides a separate privacy policy.
+  </p>
+  <h2>Covered Apps</h2>
+  <ul>
+    {% for app in covered_apps %}
+      <li><strong>{{ app.name }}</strong> ({{ app.platform }})</li>
+    {% empty %}
+      <li>All apps published by {{ developer_entity_name }} on Google Play and related channels.</li>
+    {% endfor %}
+  </ul>
+  <p>
     <strong>Last Updated:</strong> {{ last_updated }}
   </p>
 
