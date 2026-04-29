@@ -41,6 +41,11 @@ def ads_txt(request):
     return HttpResponse(content, content_type="text/plain; charset=utf-8")
 
 
+def app_ads_txt(request):
+    content = "google.com, pub-4558912554658127, DIRECT, f08c47fec0942fa0\n"
+    return HttpResponse(content, content_type="text/plain; charset=utf-8")
+
+
 def robots_txt(request):
     sitemap_url = request.build_absolute_uri("/sitemap.xml")
     content = f"""User-agent: *
