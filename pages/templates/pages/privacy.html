@@ -19,7 +19,11 @@
   <h2>Covered Apps</h2>
   <ul>
     {% for app in covered_apps %}
-      <li><strong>{{ app.name }}</strong> ({{ app.platform }})</li>
+      <li>
+        <strong>{{ app.name_en }}</strong>
+        {% if app.name_zh %}（{{ app.name_zh }}）{% endif %}
+        - <em>{{ app.platform }}</em>
+      </li>
     {% empty %}
       <li>All apps published by {{ developer_entity_name }} on Google Play and related channels.</li>
     {% endfor %}

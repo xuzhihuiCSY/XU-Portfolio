@@ -17,11 +17,16 @@ def home(request):
 def privacy(request):
     covered_apps = [
         {
-            "name": "Advanced SnakeGame",
+            "name_en": "Advanced SnakeGame",
             "platform": "Google Play",
         },
         {
-            "name": "Let's JumpRope",
+            "name_en": "Let's JumpRope",
+            "platform": "Google Play",
+        },
+        {
+            "name_en": "Lucky Critters",
+            "name_zh": "幸运小动物",
             "platform": "Google Play",
         },
     ]
@@ -32,7 +37,7 @@ def privacy(request):
         "developer_entity_type": "Individual Developer",
         "covered_apps": covered_apps,
         "contact_email": "xuzhihuieateat@gmail.com",
-        "last_updated": "2026-04-19",
+        "last_updated": "2026-05-28",
     })
 
 
