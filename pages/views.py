@@ -29,6 +29,11 @@ def privacy(request):
             "name_zh": "幸运小动物",
             "platform": "Google Play",
         },
+        # Rich or broke
+        {
+            "name_en": "Rich or Broke",
+            "platform": "Google Play",
+        },
     ]
 
     return render(request, "pages/privacy.html", {
